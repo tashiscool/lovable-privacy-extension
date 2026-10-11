@@ -1,67 +1,130 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="en" data-theme="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Maxx's Lovable</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark light">
+  <title>Lovable Companion</title>
   <link rel="stylesheet" href="theme.css">
   <link rel="stylesheet" href="sidepanel.css">
 </head>
 <body>
-  <div class="sp-header">
-    <div class="sp-brand">
-      <img class="sp-brand-logo" src="assets/logo-master-lovable-square.png" alt="">      <span class="sp-brand-text">Maxx's Lovable</span>
-    </div>
-    <div class="sp-header-actions">
-      <button class="sp-icon-btn sp-history-btn" title="History">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+  <a class="skip-link" href="#main-content">Skip to prompt</a>
+
+  <div class="app-shell">
+    <header class="app-header">
+      <div class="brand-lockup">
+        <span class="brand-mark" aria-hidden="true">L</span>
+        <div>
+          <h1>Lovable Companion</h1>
+        </div>
+      </div>
+      <button class="icon-button" id="theme-toggle" type="button" aria-pressed="false" aria-label="Use light theme">
+        <span aria-hidden="true" id="theme-icon">☀</span>
+        <span id="theme-label">Light</span>
       </button>
-      <button class="sp-icon-btn sp-theme-btn" title="Theme">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-      </button>
-      <button class="sp-icon-btn sp-logout-btn" title="Logout">🚪</button>
-    </div>
-  </div>
-  
-  <div class="sp-body" id="sp-body">
-    <div style="padding:40px 0;text-align:center">
-      <p style="color:var(--ql-text-muted)">⏳ Loading...</p>
-    </div>
+    </header>
+
+    <main id="main-content" tabindex="-1">
+      <section class="card connection-card" aria-labelledby="connection-heading">
+        <div class="section-heading-row">
+          <div>
+            <p class="eyebrow">Project</p>
+            <h2 id="connection-heading">Connected project</h2>
+          </div>
+          <span class="connection-pill" id="connection-pill" data-state="checking">
+            <span class="status-dot" aria-hidden="true"></span>
+            <span id="connection-label">Checking</span>
+          </span>
+        </div>
+        <p class="connection-message" id="connection-message" role="status" aria-live="polite">
+          Checking the project selected from the Lovable toolbar…
+        </p>
+        <p class="project-detail" id="project-detail" hidden></p>
+      </section>
+
+      <section class="card compose-card" aria-labelledby="prompt-heading">
+        <form id="prompt-form" novalidate>
+          <div class="field-heading">
+            <div>
+              <h2 id="prompt-heading">Prompt</h2>
+              <p id="prompt-help">Uses the project selected from the extension toolbar.</p>
+            </div>
+            <output id="character-count" for="prompt-input">0 / 20,000</output>
+          </div>
+
+          <label class="sr-only" for="prompt-input">Prompt for the connected Lovable project</label>
+          <textarea
+            id="prompt-input"
+            name="prompt"
+            rows="7"
+            maxlength="20000"
+            aria-describedby="prompt-help character-count"
+            placeholder="Describe the change you want Lovable to make…"
+            required
+          ></textarea>
+
+          <div class="template-section" aria-labelledby="template-heading">
+            <div class="template-heading-row">
+              <h3 id="template-heading">Quick shortcuts</h3>
+              <span>Fills the prompt only</span>
+            </div>
+            <div class="template-grid" id="template-grid"></div>
+          </div>
+
+          <div class="send-row">
+            <p class="keyboard-hint"><kbd>⌘</kbd>/<kbd>Ctrl</kbd> + <kbd>Enter</kbd></p>
+            <button class="primary-button" id="send-button" type="submit" disabled>
+              <span id="send-label">Send to Lovable</span>
+              <span aria-hidden="true">→</span>
+            </button>
+          </div>
+        </form>
+
+        <p class="feedback" id="feedback" role="status" aria-live="polite" hidden></p>
+      </section>
+
+      <section class="card privacy-card" aria-labelledby="privacy-heading">
+        <div class="section-heading-row privacy-heading-row">
+          <div>
+            <p class="eyebrow">On this device only</p>
+            <h2 id="privacy-heading">Local privacy</h2>
+          </div>
+          <label class="toggle-control" for="history-toggle">
+            <span class="toggle-copy">
+              <span>Save sent prompts</span>
+              <span>Off by default</span>
+            </span>
+            <input id="history-toggle" type="checkbox" role="switch">
+            <span class="toggle-track" aria-hidden="true"><span></span></span>
+          </label>
+        </div>
+
+        <p class="privacy-note">
+          Drafts are never stored. If history is enabled, only successfully sent prompts are kept locally, up to 20 items.
+        </p>
+
+        <div class="history-region" id="history-region" hidden>
+          <div class="history-heading-row">
+            <h3>Sent prompt history</h3>
+            <button class="text-button" id="clear-history" type="button">Clear history</button>
+          </div>
+          <p class="empty-state" id="history-empty">No saved prompts yet.</p>
+          <ol class="history-list" id="history-list"></ol>
+        </div>
+
+        <div class="privacy-actions">
+          <div>
+            <h3>Forget local data</h3>
+            <p>Clear local history and settings, and disconnect this panel from its selected project.</p>
+          </div>
+          <button class="danger-button" id="forget-button" type="button">Forget local data</button>
+        </div>
+      </section>
+    </main>
+
   </div>
 
-  <div class="sp-footer">
-    <button class="sp-back-to-popup" id="sp-back-to-popup" title="Return to floating mode" style="display:none">
-      ◀ Popup
-    </button>
-    <a href="https://whatsapp.com/channel/0029Vb7jGDG5a245baPA9H3y" target="_blank" rel="noopener noreferrer" class="sp-support-link" id="sp-support-wa" title="Join WhatsApp Channel">
-      <svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-      Support
-    </a>
-     <span class="sp-footer-badge" id="sp-footer-version"></span>
-  </div>
-
-  <div class="sp-notif-panel" id="sp-notif-panel" style="display:none">
-    <div class="sp-notif-header">
-      <span>Notifications</span>
-      <button class="sp-notif-close" id="sp-notif-close">✕</button>
-    </div>
-    <div class="sp-notif-list" id="sp-notif-list">
-      <p class="sp-notif-empty">Loading...</p>
-    </div>
-  </div>
-
-  
-  <script src="tamper-hashes.js"></script>
-  <script src="tamper-guard.js"></script>
-  <script src="tamper-init.js"></script>
-  <script src="extension-config.js"></script>
-  <script src="lovable-auth.js"></script>
-  <script src="lovable-feature-api.js"></script>
-  <script src="user-messages.js"></script>
-  <script src="jszip.min.js"></script>
-  <script src="sidepanel-templates.js"></script>
-  <script src="sounds.js"></script>
-  <script src="license-gate.js"></script>
-  <script src="sidepanel.js"></script>
+  <script type="module" src="sidepanel.js"></script>
 </body>
 </html>

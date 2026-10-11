@@ -1,62 +1,52 @@
-# Maxx's Lovable — Open Source Edition
+# Lovable Companion — Privacy Edition
 
-Companion Chrome (MV3) extension for [Lovable.dev](https://lovable.dev):
-license-gated side panel, prompt asset uploads, and lightweight analytics.
+A privacy-focused fork of [Maxx's Lovable](https://github.com/maxieyy/unlimited-lovable-extension). It keeps a local prompt composer, prompt shortcuts, theme selection, and optional local history. Prompts are delivered through Lovable's normal chat interface in the project you select.
 
-This is the **open source build** — no obfuscation, no anti-tamper, no
-encrypted bundles. The exact same source ships in production with those
-hardening layers added on top.
+## What changed
 
-## License
+- Removed the author's license server, analytics, device identifiers, third-party file uploads, prompt optimization service, and credential proxy.
+- Removed token and cookie collection, persistent credential storage, page-world network interception, and WebSocket injection.
+- Removed request rewriting that disguised ordinary prompts as error repairs. Normal Lovable credits and account rules apply.
+- Removed remote source-download, publishing, Cloud, voice, and other controls that depended on unverified services. Use Lovable's own interface for those actions and attachments.
+- Removed automatic page injection and broad host access. Temporary access is granted when you click the toolbar button on a Lovable project.
+- Restricted extension pages to local resources and blocked their network connections with Content Security Policy.
+- History is off by default. Enabling it stores at most 20 sent prompts locally. Turning it off deletes saved history. Forget local data clears extension storage and disconnects the selected project.
+- Updating an existing installation purges legacy tokens, license keys, device IDs, and other obsolete extension storage. This cannot revoke previously exposed tokens or erase prior uploads to another server.
 
-MIT — see [LICENSE](./LICENSE).
+Read [PRIVACY.md](PRIVACY.md) for data flow and limits.
 
-## Install (unpacked)
+## Install
 
-1. Download and unzip this archive.
-2. Open `chrome://extensions` in Chrome / Edge / Brave / Arc.
-3. Enable **Developer mode** (top-right).
-4. Click **Load unpacked** and pick the unzipped folder.
-5. Open Lovable.dev — the side panel icon appears in the toolbar.
+1. Download this repository's ZIP from GitHub and extract it, or clone it:
+   ```sh
+   git clone https://github.com/tashiscool/lovable-privacy-extension.git
+   ```
+2. If the original extension is installed, disable or remove it first. Its separate installation can still collect data.
+3. In Chrome, open `chrome://extensions`, enable Developer mode, and select **Load unpacked**.
+4. Select the folder containing `manifest.json`.
+5. Open a project at `https://lovable.dev/projects/...` and click this extension's toolbar button. Compose a prompt and select **Send to Lovable**.
 
-## Project layout
+There is no build step, backend, activation key, or package installation. Chrome 116 or newer is required. Other Chromium browsers must implement the Side Panel API; they have not been validated here. Incognito use is disabled.
 
-| File | Purpose |
-| --- | --- |
-| `manifest.json` | MV3 manifest, host permissions, side-panel registration |
-| `background.js` | Service worker: license API, fetch proxy, message routing |
-| `sidepanel.{html,js,css}` | Side panel UI (license gate, dashboard, settings) |
-| `license-gate.js` | Activation gate calling `/api/public/validate-license` |
-| `content.js` / `content-bridge.js` | Lovable.dev DOM integration |
-| `pageHook.js` | Page-world hook (token capture, network instrumentation) |
-| `lovable-auth.js` / `lovable-feature-api.js` | Lovable token + feature helpers |
-| `extension-config.js` | API base URL and feature flags |
-| `user-messages.js` | Human-readable error translation |
-| `sounds.js` | Soft audio cues for success / error states |
-| `jszip.min.js` | Vendored ZIP helper for bulk uploads |
-| `assets/` | Icons & logo PNGs |
+If the project tab changes or navigates to another project, click the toolbar button again to select it. Existing drafts and disabled Lovable controls are respected. Lovable can change its editor DOM, in which case sending stops until the adapter is updated.
 
-## Configuration
+## Development and verification
 
-`extension-config.js` defines the backend base URL:
+Node.js 22 or newer is needed only to run tests:
 
-```js
-self.MxxConfig = { apiBase: "https://unlimitedprompts.lovable.app" };
+```sh
+npm run check
+npm test
 ```
 
-Point it at your own deployment if you self-host the dashboard.
+Tests use Node's built-in test runner; there are no npm dependencies. Browser smoke tests use a separately installed Playwright package and synthetic fixtures, never a real Lovable account:
 
-## Differences vs. the production build
+```sh
+PLAYWRIGHT_MODULE=/absolute/path/to/playwright/index.mjs node tests/browser-smoke.mjs
+```
 
-| | Open source | Production |
-| --- | --- | --- |
-| Obfuscation | none | string-array + control-flow flattening |
-| Tamper guard | removed | SHA-256 pinned + Ed25519 signed responses |
-| Bundled README / LICENSE | yes | no |
+Runtime code lives in `background.js`, `privacy-policy.js`, `native-prompt.js`, and `sidepanel.js`. The extension has no persistent content script, external message handler, generic fetch proxy, or page-visible credential bridge.
 
-Both builds talk to the same `/api/public/*` endpoints and use the same
-license format.
+## Attribution and license
 
-## Contributing
-
-See [CONTRIBUTING.md](./CONTRIBUTING.md). PRs welcome.
+Derived from Maxx's Lovable — Open Source Edition by maxieyy and its contributors. Original attribution and the [MIT license](LICENSE) are retained. This fork is independently maintained and is not an official Lovable product.

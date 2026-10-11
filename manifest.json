@@ -1,26 +1,18 @@
 {
   "manifest_version": 3,
-  "name": "Maxx's Lovable",
-  "version": "1.2.0",
-  "description": "Companion extension for Lovable.dev with license, analytics, and prompt asset uploads.",
+  "name": "Lovable Companion — Privacy Edition",
+  "version": "2.0.0",
+  "description": "A local prompt companion that sends through Lovable's normal chat. No telemetry, credential access, or third-party backend.",
+  "minimum_chrome_version": "116",
   "permissions": [
-    "storage",
     "activeTab",
     "scripting",
-    "tabs",
     "sidePanel",
-    "cookies",
-    "alarms"
+    "storage"
   ],
-  "host_permissions": [
-    "https://*.lovable.dev/*",
-    "https://api.lovable.dev/*",
-    "https://lovable.dev/*",
-    "https://lovable-api.com/*",
-    "https://unlimitedprompts.lovable.app/*"
-  ],
+  "incognito": "not_allowed",
   "action": {
-    "default_title": "Maxx's Lovable",
+    "default_title": "Open Lovable Companion for this project",
     "default_icon": {
       "16": "assets/icon16.png",
       "32": "assets/icon32.png",
@@ -32,60 +24,12 @@
     "default_path": "sidepanel.html"
   },
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "background.js",
+    "type": "module"
   },
-  "content_scripts": [
-    {
-      "matches": [
-        "https://*.lovable.dev/*",
-        "https://lovable.dev/*"
-      ],
-      "js": [
-        "pageHook.js"
-      ],
-      "run_at": "document_start",
-      "world": "MAIN"
-    },
-    {
-      "matches": [
-        "https://*.lovable.dev/*",
-        "https://lovable.dev/*",
-        "https://api.lovable.dev/*"
-      ],
-      "js": [
-        "extension-config.js",
-        "lovable-auth.js",
-        "lovable-feature-api.js",
-        "user-messages.js",
-        "jszip.min.js",
-        "content-bridge.js",
-        "sounds.js"
-      ],
-      "css": [
-        "theme.css"
-      ],
-      "run_at": "document_idle"
-    }
-  ],
-  "web_accessible_resources": [
-    {
-      "resources": [
-        "pageHook.js",
-        "sounds/error-ratelimit.mp3",
-        "sounds/error-token.mp3",
-        "assets/logo-master-lovable.png",
-        "assets/logo-master-lovable-square.png",
-        "assets/icon16.png",
-        "assets/icon32.png",
-        "assets/icon48.png",
-        "assets/icon128.png"
-      ],
-      "matches": [
-        "https://*.lovable.dev/*",
-        "https://lovable.dev/*"
-      ]
-    }
-  ],
+  "content_security_policy": {
+    "extension_pages": "default-src 'self'; script-src 'self'; object-src 'none'; connect-src 'none'; img-src 'self' data:; style-src 'self'; font-src 'self'; base-uri 'none'; form-action 'none'; frame-src 'none';"
+  },
   "icons": {
     "16": "assets/icon16.png",
     "32": "assets/icon32.png",
